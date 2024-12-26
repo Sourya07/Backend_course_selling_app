@@ -11,6 +11,20 @@ adminRouter.post("/signup", async function (req, res) {
     const { email, password, firstName, lastName } = req.body; // TODO: adding zod validation
     // TODO: hash the password so plaintext pw is not stored in the DB
 
+    const requirebody = z.object({
+        email: z.string().email(),
+        password: z.string().min(8),
+        firstName: z.string().min(8),
+        lastName: z.string().min(8)
+
+    })
+
+    const parsedata = requirebody.safeParse(req.body);
+    if (!parsedata.success) {
+        console.error("Validation error:", parsedata.error);
+        return res.status(400).json(parsedata.error);
+    }
+
     // TODO: Put inside a try catch block
     await adminModel.create({
         email: email,
